@@ -1,46 +1,66 @@
 import React , { Component } from 'react';
 
-import { View , Text , StyleSheet , TextInput , TouchableOpacity} from 'react-native';
+import { View , Text , StyleSheet , TouchableWithoutFeedback , Alert , TouchableOpacity ,Keyboard , Button} from 'react-native';
 
 import Input from "./Input";
+import Card from "./Card";
+import NumberCard from "./NumberCard";
 class StartScreen extends Component{
     constructor(props){
         super(props);
         this.state = {
             enteredvalue : '',
             selectedvalue : undefined,
-            confirmstatus : true
+            confirmstatus : false
         }
     }
 
     inputtextHandler(enteredtext){
         const changevalue = enteredtext.replace(/[^0-9]/g,'');
         this.setState({enteredvalue : changevalue});
-        this.setState({confirmstatus:false});
     }
 
     resetHandler(){
         this.setState({enteredvalue : ''});
-        this.setState({confirmstatus:true});
+        this.setState({confirmstatus:false});
     }
 
     confirmHandler(){
         const chosenvalue = parseInt(this.state.enteredvalue);
         console.log(chosenvalue);
-        if (chosenvalue >= 99 || chosenvalue <= 9 || chosenvalue === NaN){
+        if (chosenvalue >= 99 || chosenvalue <= 9 || isNaN(chosenvalue)){
+            Alert.alert('Invalid number','Please enter a number between 9 to 100',
+            [{text : 'Okay', style : 'destructive' , onPress : this.resetHandler()}]);
+            Keyboard.dismiss();
             return;
         }
         this.setState({selectedvalue : chosenvalue});
         this.setState({enteredvalue : ''});
         this.setState({confirmstatus:true});
+        Keyboard.dismiss();
         console.log(chosenvalue);
+    }
+
+    renderElement(){
+        if(this.state.confirmstatus){
+            let confirmedoutput = <Card style={styles.numbercard}>
+                <Text style={styles.buttontext}>You selected : </Text>
+                <NumberCard>{this.state.selectedvalue}</NumberCard>
+                <Button title='START GAME'></Button>
+                </Card>
+            return confirmedoutput;
+        }
+        else{
+            return null;
+        }
     }
 
     render(){
         return(
+            <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <View style={styles.screen}>
                 <Text style={styles.screentitle}>Start new game</Text>
-                <View style={styles.inputcontainer}>
+                <Card style={styles.inputcontainer}>
                     <Text style={styles.inputtitle}>Select a number</Text>
                     <Input style={styles.input}
                     autoCapitalize='none'
@@ -53,12 +73,14 @@ class StartScreen extends Component{
                         <TouchableOpacity style={styles.resetbutton} onPress={this.resetHandler.bind(this)}>
                             <Text style={styles.buttontext}>Reset</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.confirmbutton} disabled={this.state.confirmstatus} onPress={this.confirmHandler.bind(this)}>
+                        <TouchableOpacity style={styles.confirmbutton} onPress={this.confirmHandler.bind(this)}>
                             <Text style={styles.buttontext}>Confirm</Text>
                         </TouchableOpacity>
                     </View>
-                </View>
+                </Card>
+                <View>{this.renderElement()}</View>
             </View>
+            </TouchableWithoutFeedback>
         )
     }
 }
@@ -76,12 +98,7 @@ const styles = StyleSheet.create({
     },
     inputcontainer : {
         width : '80%',
-        marginVertical : 20,
-        elevation : 7,
-        backgroundColor : 'white',
-        borderRadius : 10,
-        alignItems : 'center',
-        padding : 15
+        marginVertical : 10
     },
     inputtitle : {
         fontSize : 18,
@@ -107,11 +124,15 @@ const styles = StyleSheet.create({
         backgroundColor : '#f1679aa3'
     },
     buttontext : {
-        fontSize : 16
+        fontSize : 18
     },
     input:{
         width : 50,
         textAlign : 'center'
+    },
+    numbercard : {
+        marginVertical : 20,
+        padding : 30
     }
 })
 
