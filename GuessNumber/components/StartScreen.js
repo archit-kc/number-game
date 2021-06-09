@@ -46,7 +46,7 @@ class StartScreen extends Component{
             let confirmedoutput = <Card style={styles.numbercard}>
                 <Text style={styles.buttontext}>You selected : </Text>
                 <NumberCard>{this.state.selectedvalue}</NumberCard>
-                <Button title='START GAME'></Button>
+                <Button title='START GAME' onPress={this.props.onStart.bind(this.state.selectedvalue)}></Button>
                 </Card>
             return confirmedoutput;
         }
