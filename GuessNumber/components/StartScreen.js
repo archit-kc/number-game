@@ -27,7 +27,6 @@ class StartScreen extends Component{
 
     confirmHandler(){
         const chosenvalue = parseInt(this.state.enteredvalue);
-        console.log(chosenvalue);
         if (chosenvalue >= 99 || chosenvalue <= 9 || isNaN(chosenvalue)){
             Alert.alert('Invalid number','Please enter a number between 9 to 100',
             [{text : 'Okay', style : 'destructive' , onPress : this.resetHandler()}]);
@@ -38,7 +37,6 @@ class StartScreen extends Component{
         this.setState({enteredvalue : ''});
         this.setState({confirmstatus:true});
         Keyboard.dismiss();
-        console.log(chosenvalue);
     }
 
     renderElement(){
@@ -46,7 +44,7 @@ class StartScreen extends Component{
             let confirmedoutput = <Card style={styles.numbercard}>
                 <Text style={styles.buttontext}>You selected : </Text>
                 <NumberCard>{this.state.selectedvalue}</NumberCard>
-                <Button title='START GAME' onPress={this.props.onStart.bind(this.state.selectedvalue)}></Button>
+                <Button title='START GAME' onPress={this.props.onStart(this.state.selectedvalue)}></Button>
                 </Card>
             return confirmedoutput;
         }
